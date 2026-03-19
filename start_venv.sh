@@ -1,1 +1,1 @@
-source .venv/bin/activate
+source IC_venv/bin/activate

@@ -83,10 +83,9 @@ def plotar_comparacao(df_real, df_previsto):
     plt.show()
 
 
-file_path = "../datasets_tratados/BRASILIA.CSV"
-file2_path = "../datasets_tratados/exemplo_previsao.CSV"
+file_path = "./resultados_previsoes.csv"
+file2_path = "./resultados_previsoes_1.csv"
 dataset = pd.read_csv(file_path)
 dataset2 = pd.read_csv(file2_path)
 
-plotar_radiacao(dataset.head(96))
-plotar_comparacao(dataset.head(96), dataset2.head(120))
+plotar_comparacao(dataset, dataset2)
