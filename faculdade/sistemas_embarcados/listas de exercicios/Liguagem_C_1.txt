@@ -44,5 +44,104 @@
 	forma de acessar os registradores responsáveis pelos periféricos é se utilizando de ponteiros.
 
 4.b) 
-	import <stdint.h>
-	volatile uint8_t *periferico = (volatile uint_8 *) 0b40021000
+	#include <stdint.h>
+	volatile uint32_t *periferico = (volatile uint32_t *) 0x40021000;
+	
+	*periferico = 0x01;
+	
+5.a)
+	struct SensorData {
+		float temperature;
+		float pressure;
+		unsigned char status;
+	};
+
+5.b) 
+	Unions são uma estrutura de dados em C que se caracterizam por guardar multiplos valores
+	no mesmo espaço de memória de maneira mutualmente exclusiva. Os unions tem o tamanho do
+	maior tipo que foi definido entre as variáveis do union e só pode armazenar um dos valores.
+	
+6.a)
+	int my_strlen(char *palavra) {
+		int contador = 0;
+		
+		while (palavra[contador] != '\0') {
+			contador++;
+		}
+		return contador;
+	}
+	
+6.b)
+	Essas funções funcionam de forma despreocupada em relação a quantidade de memória dispo-
+	nível no sistema, por isso o seu uso pode causar erros de estouro de buffer ou acessos a po-
+	sições indevidas de memória.
+
+7.a)
+	Ambas as ferramentas são usadas para definir valores imutáveis mas divergem na forma como
+	fazem isso. O #define funciona com o pré-processador substituindo todos os locais onde a
+	variável aparece pelo valor literal definido, economizando memória pois não precisou-se sal-
+	var uma variável na memória. Enquanto isso, o const define um valor apensa de leitura, onde 
+	o compilador se encarrega de garantir que o valor não será manipulado de forma alguma.
+
+7.b) 
+	Considerando que o valor do clock não deve ser manipulado para garantir consistência de exe-
+	cução, o ideal seria o uso do 'const'.
+	
+8.a)
+	Interrupções são um mecanismo computacional usado para pausar o processamento atual da CPU
+	para executar um bloco de código mais importante no momento. Em C, as interrupções são tra-
+	tadas por funções especiais chamadas de ISR ( Interrupt Service Routines ), que são chamadas
+	exclusivamente pelo próprio hardware.
+
+8.b)
+	#include <stdint.h>
+	
+	volatile uint32_t button_press_count = 0;
+	
+	void EXTIO_IRQHandler(void) {
+		button_press_count++;
+	}
+	
+9.a)
+	Os sistemas embarcados se caracterizam por operar com várias limitações, como baterias li-
+	mitadas, custo e tamanho limitados e difícil dissipação de calor. A economia de energia é im-
+	portante para garantir que o sistema seja econômico e confiável para o trabalho destinado.
+	A linguagem C auxilia nesse aspecto pois ela é uma linguagem operação rápida e econômica,
+	por ser uma linguagem de baixo nível, e ela também apresenta acesso direto à registradores,
+	desligando os que não estão sendo utilizados no momento.
+	
+9.b)
+	Esse exemplo é destinado à familia ARM Cortex-M
+	#include <core_cm3.h> 
+	
+	void esperar_interrupção() {
+		__WFI();
+	}
+	
+	obs: WFI é sigla para "Wait For Interruption"
+	
+10.a)
+	Algumas práticas para a otimização de código em C são: 
+	1 - Evitar o uso do tipo "int", preferindo os tipos do <stdint.h> para economizar memória.
+	2 - Usar o prefixo "const" para gravar valores na ROM e economizar RAM.
+	3 - Utilizar operações bit a bit pois são bem mais rápidas.
+	4 - Utilizar as flags de otimização do compilador.
+	
+10.b)
+	int multiply_by_seven(int num) {
+		return num * 7;
+	}
+	
+	#include <stdint.h>
+	uint16_t multiply_by_seven(const uint8_t num) {
+		return (num << 3) - num;
+	} 
+	
+	obs: (num << 3) = num * 8, porém utilizando operações bit a bit. logo, subtrair num dessa 
+			operação equivale a multiplicar por 7 mas de maneira muito mais rápida.
+			
+	
+	
+	
+	
+	
