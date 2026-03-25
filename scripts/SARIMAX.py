@@ -20,7 +20,8 @@ previsoes = []
 valores_reais = []
 
 # --- CORREÇÃO 2: Limite de passos para não travar seu PC por dias ---
-passos_para_prever = 72
+passos_para_prever = int(len(serie_completa) * 0.4)
+
 fim_loop = tamanho_janela + passos_para_prever
 
 print(f"Tamanho da janela de treino: {tamanho_janela} horas.")
@@ -38,10 +39,10 @@ for i in range(tamanho_janela, fim_loop):
     modelo = SARIMAX(janela_treino, order=(1, 0, 0), seasonal_order=(2, 0, 0, 24))
 
     # disp=False impede que o SARIMAX imprima relatórios gigantescos a cada passo
-    modelo_ajustado = modelo.fit(disp=False)
+    modelo_ajustado = modelo.fit(disp=False)  # type: ignore
 
     # Faz a previsão de 1 passo à frente e pega o valor numérico exato
-    previsao_1_passo = modelo_ajustado.forecast(steps=1)[0]
+    previsao_1_passo = modelo_ajustado.forecast(steps=1)[0]  # type: ignore
 
     previsoes.append(previsao_1_passo)
     valores_reais.append(serie_completa[i])
@@ -55,16 +56,22 @@ fim = time.perf_counter()
 # 3. Visualizando e Salvando os Resultados
 print(f"\nO loop rodou {len(previsoes)} vezes e levou {fim - inicio:.4f} segundos.")
 
+# Cálculo dos resíduos (Erro = Real - Previsto)
+residuos = [real - pred for real, pred in zip(valores_reais, previsoes)]
+
 df_resultados = pd.DataFrame(
     {
         "Indice_Tempo": range(tamanho_janela, fim_loop),
         "Valor_real": valores_reais,
         "Previsao_SARIMAX": previsoes,
+        "Residuo": residuos,  # Nova coluna adicionada aqui
     }
 )
 
-df_resultados.to_csv("resultados_previsoes.csv", index=False)
-print("Resultados salvos em CSV com sucesso!")
+output_path = "./previsoes/previsoes_SARIMA_2.csv"
+df_resultados.to_csv(output_path, index=False)
+print("Resultados salvos em CSV com sucesso (incluindo coluna de resíduos)!")
+
 
 # Visualização
 plt.figure(figsize=(12, 6))
